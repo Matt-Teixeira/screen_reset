@@ -1,0 +1,116 @@
+ OR1023-1 1023 Field current 000.00A 17:05:32 21-Dec-22
+                   02:00:01
+
+
+                3e8  036  31 41  51 71  S/C    S/C
+     HE ALARM                       OFF
+                                    PASS
+          LOAD ALARM                OFF
+          00.00                     OFF 50%  A
+                                    OFF
+                   27.3K
+                   27.3K           27.3K   ALARM
+                   6.7K            6.7K    ALARM
+                   2500R           2500R
+                   2500R           2500R
+                   265.2R
+                   52.6R           52.5R
+                   13.50                   ALARM
+                   0.000W                  OK
+                    0.00  TOO FEW BUTTONS
+         Alarmbox Communications Fault.
+
+ OR1023-1 1023 Field current 000.00A 17:05:10 21-Dec-22
+                   02:00:01
+
+
+                3e8  036  31 41  51 71  S/C    S/C
+     HE ALARM                       OFF
+                                    PASS
+          LOAD ALARM                OFF
+          00.00                     OFF 50%  A
+                                    OFF
+                   27.3K
+                   27.3K           27.3K   ALARM
+                   6.7K            6.7K    ALARM
+                   2500R           2500R
+                   2500R           2500R
+                   265.0R
+                   52.6R           52.5R
+                   13.50                   ALARM
+                   0.000W                  OK
+                    0.00  TOO FEW BUTTONS
+         Alarmbox Communications Fault.
+
+
+
+│ View log │ VE          │ View event log                         │
+│ View log │ VC          │ View Cold Head log                     │
+ OR1023-1 1023 Field current 000.00Ag17:15:47 21-Dec-22           │
+│ Zero     │ Zx nnn02:00:01 robe 1 or 2 ADC reading 0% He level   │
+│ Hundred  │ Hx nnn      │ Probe 1 or 2 ADC reading 100% He level │
+│ Serial   │ xSN nnnnnnnn│ (M)agnet or (S)upervisory S/N          │
+│ Revision │ xRN3e8  036  31 41  51 71 (S/C  rvS/C   Revision     │
+│ Z2 HE ALARM            │ Z2 Shim sOFFi i                        │
+│ He Param │ VH          │ View HeliPASSaramerers                 │
+│ Htr Res.LOAD ALARM        et HeateOFFe istance                  │
+└─────────00.00──────────┴──────────OFF 50%  A  ──────────────────┘
+                                    OFF
+Command:           27.3K
+                   27.3K           27.3K   ALARM
+Command:           6.7K            6.7K    ALARM
+                   2500R           2500R
+Command:           2500R           2500R
+                   265.0R
+Command:           52.5R           52.5R
+                   13.50                   ALARM
+Command: R         0.000W                  OK
+                    0.00  TOO FEW BUTTONS
+         Alarmbox Communications Fault.
+ Magnet Supervisory  "551-360 VA08K 03/05/12"
+ OR1023-1 1023 Field current 000.00A 17:14:17 21-Dec-22
+ Supervisory Time: 02:00:01
+ MSUP S/N 00003942 Rev 0002 Magnet S/N 00000 Rev 0000
+ He Parameters   0%  100% ALRM%  WARN%  LEVEL1 LEVEL2
+ Values         3e8  036  31 41  51 71  S/C    S/C
+ He: HE ALARM                  EIS: OFF
+                         Self Test: PASS
+ Battery: LOAD ALARM            SH: OFF
+   Volts  00.00          Press HTR: OFF 50%  A
+                        Compressor: OFF
+ Cold Head Sensor1:27.3K
+ Shield    Sensor1:27.3K   Sensor2:27.3K   ALARM
+ Turret    Sensor1:6.7K    Sensor2:6.7K    ALARM
+ Carbon R  Sensor1:2500R   Sensor2:2500R   ALARM
+ Carbon R  Sensor3:2500R   Sensor4:2500R   ALARM
+ SwtHtr       Res1:265.2R                  ALARM
+ QuhHtr       Res1:52.5R      Res2:52.5R   ALARM
+ Mag psiA         :13.50                   ALARM
+ Average Power    :0.000W                  OK
+ ERDU      Buttons: 0.00  TOO FEW BUTTONS
+ Tests:  Alarmbox Communications Fault.
+
+
+
+ Magnet Supervisory  "551-360 VA08K 03/05/12"
+ OR1023-1 1023 Field current 000.00A 17:09:51 21-Dec-22
+ Supervisory Time: 02:00:01
+ MSUP S/N 00003942 Rev 0002 Magnet S/N 00000 Rev 0000
+ He Parameters   0%  100% ALRM%  WARN%  LEVEL1 LEVEL2
+ Values         3e8  036  31 41  51 71  S/C    S/C
+ He: HE ALARM                  EIS: OFF
+                         Self Test: PASS
+ Battery: LOAD ALARM            SH: OFF
+   Volts  00.00          Press HTR: OFF 50%  A
+                        Compressor: OFF
+ Cold Head Sensor1:27.3K
+ Shield    Sensor1:27.3K   Sensor2:27.3K   ALARM
+ Turret    Sensor1:6.7K    Sensor2:6.7K    ALARM
+ Carbon R  Sensor1:2500R   Sensor2:2500R   ALARM
+ Carbon R  Sensor3:2500R   Sensor4:2500R   ALARM
+ SwtHtr       Res1:265.0R                  ALARM
+ QuhHtr       Res1:52.5R      Res2:52.5R   ALARM
+ Mag psiA         :13.50                   ALARM
+ Average Power    :0.000W                  OK
+ ERDU      Buttons: 0.00  TOO FEW BUTTONS
+ Tests:  Alarmbox Communications Fault.

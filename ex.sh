@@ -1,10 +1,20 @@
 #!/bin/bash
+#
+# 2021.08.17  Created by Simplexable to support 1st generation Siemens RDU (TIM magnet). (crw)
+#
+# 2021.08.19  Changed curl to use HTTPS. (crw)
+#
+# full credit to Bach Nguyen (Samei, Inc.) for original implementation which forms a large part of this script
+
+# echo "RDU V1 9600 baud script for TIM MSUP is running. This logs to msup-full.log."
+
+#11/12/22 Updated script to reflect magnet type this includes screen / screipt and log file with standard name Siemens-4####Joe Anello#####
 
 # STORES CAPTURE DATETIMES AND SUCCESSFUL OR FAILED READINGS FROM QA
-logfile_path=~/corrupt_test.log
+logfile_path=~/siemens_4k.log
 
 # QA LOG IS A TEMP WHICH HOLDS ATTEMPTED READINGS
-logfile_path_qa=~/corrupt_test_qa.log
+logfile_path_qa=~/siemens_4k_qa.log
 
 # GET A TIMESTAMP REFERENCE, HARD SET SEC -> 00
 now_ISO8601=$(date -u +"%Y-%m-%dT%H:%M:00Z")
@@ -50,7 +60,7 @@ for a in {1..3}; do
 
    echo "[reading]" >> $logfile_path_qa
 
-   screen -S siemens_4k -X eval "hardcopy_append on" "hardcopy corrupt_test_qa.log"
+   screen -S siemens_4k -X eval "hardcopy_append on" "hardcopy siemens_4k_qa.log"
 
    # SLEEP TO ENSURE [/reading] APPEND IS AFTER screen EVENT
    sleep 3
@@ -82,29 +92,9 @@ for a in {1..3}; do
 
    fi
 
-   check3=$(grep "^B View log" $logfile_path_qa | wc -l)
-
-   echo "THIS IS check3"
-
-   echo $check3
-
-   echo cat $logfile_path_qa 
-
-   echo $logfile_path_qa
-
-   if [ $check3 -eq 1 ]; then
-
-      echo "[failure] corrupt screen detected" | tee -a "$logfile_path_qa"
-
-   else
-
-      echo "[success] corruption not detected" | tee -a "$logfile_path_qa"
-
-   fi
-
    # IF BOTH ARE PRESENT, WE CAN GET OUT OF THE LOOP
 
-   if [ $check1 -gt 0 ] && [ $check2 -gt 0 ] && [ $check3 -lt 1 ]; then
+   if [ $check1 -gt 0 ] && [ $check2 -gt 0 ]; then
 
       echo "[success] all data is present" | tee -a "$logfile_path_qa"
       break
@@ -134,8 +124,16 @@ done
 
 # IF WE TRIED THREE TIMES AND CANNOT GET DATA, WE HAVE TO BAIL OUT
 
-if [ $check1 -eq 0 ] || [ $check2 -eq 0 ] || [ $check3 -gt 0 ]; then
+if [ $check1 -eq 0 ] || [ $check2 -eq 0 ]; then
 
    echo "[failure] could not get helium and compressor data after three tries, aborting now..." | tee -a "$logfile_path"
 
 fi
+
+# APPEND THIS READING TO FULL RDU LOG
+cat $logfile_path_qa >> $logfile_path
+
+# APPEND END CAP BLOCK
+echo "[END CAPTURE BLOCK : ${now_ISO8601}]" | tee -a "$logfile_path"
+
+echo "" >>$logfile_path
