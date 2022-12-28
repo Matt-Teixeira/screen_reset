@@ -20,23 +20,21 @@ echo "[START CAPTURE BLOCK : ${now_ISO8601}]" | tee -a "$logfile_path"
 # LOOKS FOR A MATCH ON THE SCREEN COMMAND
 # AND REMOVES THIS GREP PROCESS FROM THE RESULTS
 
-screen=$(ps -aux | grep 'SCREEN -dmS *siemens_4k*' | grep -v grep)
+screen=$(screen -list | grep -Eo '[[:digit:]]+\.rdu' | wc -l)
 
-# SET THIS OUTPUT JUST TO TEST IF A PROCESS WAS RETURNED (SCREEN SESSION EXISTS)
-
-set -- $screen
+echo $screen
 
 # IF THERE WAS NO RESULT FROM SET, WE NEED TO START A SCREEN SESSION NOW
 
-if (($# == 0)); then
+if [ $screen -eq 0 ]; then
 
-   echo "[info] creating a new screen session for siemens 4k msup" | tee -a "$logfile_path"
+   echo "[info] creating a new screen session for rdu" | tee -a "$logfile_path"
 
-   screen -dmS siemens_4k /dev/ttyUSB0 9600
+   screen -dmS rdu /dev/ttyUSB0 9600
 
 else
 
-   echo "[info] connecting to existing screen for the Siemens 4k MSUP" | tee -a "$logfile_path"
+   echo "[info] connecting to existing screen for the rdu" | tee -a "$logfile_path"
 
 fi
 
@@ -46,11 +44,11 @@ for a in {1..3}; do
    : > $logfile_path_qa
 
    # WRITING THE SCREEN SCRAPE TO QA.LOG
-   echo "[info] capturing the MSUP screen (attempt $a/3)" | tee -a "$logfile_path_qa"
+   echo "[info] capturing the rud screen (attempt $a/3)" | tee -a "$logfile_path_qa"
 
    echo "[reading]" >> $logfile_path_qa
 
-   screen -S siemens_4k -X eval "hardcopy_append on" "hardcopy corrupt_test_qa.log"
+   screen -S rdu -X eval "hardcopy_append on" "hardcopy corrupt_test_qa.log"
 
    # SLEEP TO ENSURE [/reading] APPEND IS AFTER screen EVENT
    sleep 3
@@ -58,7 +56,7 @@ for a in {1..3}; do
 
    # DID WE LOCATE THE BASIC PARAMETERS SCREEN (STRUCTURAL TEST OF THE DATA)?
 
-   check1=$(grep "He Parameters" $logfile_path_qa | wc -l)
+   check1=$(grep "He" $logfile_path_qa | wc -l)
 
    if [ $check1 -gt 0 ]; then
 
@@ -84,14 +82,6 @@ for a in {1..3}; do
 
    check3=$(grep "^B View log" $logfile_path_qa | wc -l)
 
-   echo "THIS IS check3"
-
-   echo $check3
-
-   echo cat $logfile_path_qa 
-
-   echo $logfile_path_qa
-
    if [ $check3 -eq 1 ]; then
 
       echo "[failure] corrupt screen detected" | tee -a "$logfile_path_qa"
@@ -102,9 +92,21 @@ for a in {1..3}; do
 
    fi
 
+   check4=$(grep "3;10H" $logfile_path_qa | wc -l)
+
+   if [ $check4 -eq 1 ]; then
+
+      echo "[failure] corrupt screen detected check 4" | tee -a "$logfile_path_qa"
+
+   else
+
+      echo "[success] corruption not detected check 4" | tee -a "$logfile_path_qa"
+
+   fi
+
    # IF BOTH ARE PRESENT, WE CAN GET OUT OF THE LOOP
 
-   if [ $check1 -gt 0 ] && [ $check2 -gt 0 ] && [ $check3 -lt 1 ]; then
+   if [ $check1 -gt 0 ] && [ $check2 -gt 0 ] && [ $check3 -lt 1 ] && [ $check4 -lt 1 ]; then
 
       echo "[success] all data is present" | tee -a "$logfile_path_qa"
       break
@@ -134,7 +136,7 @@ done
 
 # IF WE TRIED THREE TIMES AND CANNOT GET DATA, WE HAVE TO BAIL OUT
 
-if [ $check1 -eq 0 ] || [ $check2 -eq 0 ] || [ $check3 -gt 0 ]; then
+if [ $check1 -eq 0 ] || [ $check2 -eq 0 ] || [ $check3 -gt 0 ] || [ $check4 -gt 0 ]; then
 
    echo "[failure] could not get helium and compressor data after three tries, aborting now..." | tee -a "$logfile_path"
 
