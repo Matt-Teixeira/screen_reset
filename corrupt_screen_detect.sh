@@ -22,8 +22,6 @@ echo "[START CAPTURE BLOCK : ${now_ISO8601}]" | tee -a "$logfile_path"
 
 screen=$(screen -list | grep -Eo '[[:digit:]]+\.rdu' | wc -l)
 
-echo $screen
-
 # IF THERE WAS NO RESULT FROM SET, WE NEED TO START A SCREEN SESSION NOW
 
 if [ $screen -eq 0 ]; then
@@ -56,7 +54,7 @@ for a in {1..3}; do
 
    # DID WE LOCATE THE BASIC PARAMETERS SCREEN (STRUCTURAL TEST OF THE DATA)?
 
-   check1=$(grep "He" $logfile_path_qa | wc -l)
+   check1=$(grep "He Parameters" $logfile_path_qa | wc -l)
 
    if [ $check1 -gt 0 ]; then
 
@@ -68,7 +66,7 @@ for a in {1..3}; do
 
    fi
 
-   check2=$(grep "Compressor" $logfile_path_qa | wc -l)
+   check2=$(grep "Compressor:" $logfile_path_qa | wc -l)
 
    if [ $check2 -gt 0 ]; then
 
@@ -80,11 +78,11 @@ for a in {1..3}; do
 
    fi
 
-   check3=$(grep "^B View log" $logfile_path_qa | wc -l)
+   check3=$(grep "3;10H" $logfile_path_qa | wc -l)
 
    if [ $check3 -eq 1 ]; then
 
-      echo "[failure] corrupt screen detected" | tee -a "$logfile_path_qa"
+      echo "[failure] corrupt screen detected: '3;10H'" | tee -a "$logfile_path_qa"
 
    else
 
@@ -92,21 +90,9 @@ for a in {1..3}; do
 
    fi
 
-   check4=$(grep "3;10H" $logfile_path_qa | wc -l)
-
-   if [ $check4 -eq 1 ]; then
-
-      echo "[failure] corrupt screen detected check 4" | tee -a "$logfile_path_qa"
-
-   else
-
-      echo "[success] corruption not detected check 4" | tee -a "$logfile_path_qa"
-
-   fi
-
    # IF BOTH ARE PRESENT, WE CAN GET OUT OF THE LOOP
 
-   if [ $check1 -gt 0 ] && [ $check2 -gt 0 ] && [ $check3 -lt 1 ] && [ $check4 -lt 1 ]; then
+   if [ $check1 -gt 0 ] && [ $check2 -gt 0 ] && [ $check3 -lt 1 ]; then
 
       echo "[success] all data is present" | tee -a "$logfile_path_qa"
       break
@@ -119,12 +105,12 @@ for a in {1..3}; do
 
       echo "[reset 1/2] now resetting the MSUP screen due to missing data (3 sec delay)" | tee -a "$logfile_path_qa"
 
-      screen -S siemens_4k -X -p 0 stuff '\033\n\n'
+      screen -S rdu -X -p 0 stuff '\033\n\n'
       sleep 3
 
       # GET US BACK INTO THE MONITOR MODE
       echo "[reset 2/2] now attempting to re-enter monitoring mode (5 sec delay)" | tee -a "$logfile_path_qa"
-      screen -S siemens_4k -X -p 0 stuff '\n\nR\n\n'
+      screen -S rdu -X -p 0 stuff '\n\nR\n\n'
       sleep 5
 
       # NOW WE START OVER AGAIN
@@ -136,7 +122,7 @@ done
 
 # IF WE TRIED THREE TIMES AND CANNOT GET DATA, WE HAVE TO BAIL OUT
 
-if [ $check1 -eq 0 ] || [ $check2 -eq 0 ] || [ $check3 -gt 0 ] || [ $check4 -gt 0 ]; then
+if [ $check1 -eq 0 ] || [ $check2 -eq 0 ] || [ $check3 -gt 0 ]; then
 
    echo "[failure] could not get helium and compressor data after three tries, aborting now..." | tee -a "$logfile_path"
 
