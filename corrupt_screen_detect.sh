@@ -16,13 +16,11 @@ touch $logfile_path_qa
 echo "[START CAPTURE BLOCK : ${now_ISO8601}]" | tee -a "$logfile_path"
 
 # CHECK FOR AN EXISTING SCREEN SESSION RUNNING AS RDU
-# THIS LISTS ALL PROCESSES INCLUDING NON-TERMINAL ONES LIKE THE SCREEN SESSION
-# LOOKS FOR A MATCH ON THE SCREEN COMMAND
-# AND REMOVES THIS GREP PROCESS FROM THE RESULTS
+# GREP RETURNS WORD COUNT MATCHING ON 'rdu' FROM SCREEN LIST
 
 screen=$(screen -list | grep -Eo '[[:digit:]]+\.rdu' | wc -l)
 
-# IF THERE WAS NO RESULT FROM SET, WE NEED TO START A SCREEN SESSION NOW
+# IF THE WORD COUNT FOR 'rdu', (value bound to $screen) IS 0, WE NEED TO START A NEW SCREEN SESSION
 
 if [ $screen -eq 0 ]; then
 
@@ -90,7 +88,7 @@ for a in {1..3}; do
 
    fi
 
-   # IF BOTH ARE PRESENT, WE CAN GET OUT OF THE LOOP
+   # IF $check1 & $check2 ARE PRESENT AND $check3 IS NOT PRESENT, WE CAN GET OUT OF THE LOOP
 
    if [ $check1 -gt 0 ] && [ $check2 -gt 0 ] && [ $check3 -lt 1 ]; then
 
@@ -105,6 +103,7 @@ for a in {1..3}; do
 
       echo "[reset 1/2] now resetting the MSUP screen due to missing data (3 sec delay)" | tee -a "$logfile_path"
 
+      # EQUIVALENT TO PRESSING UP KEY ON KEYPAD
       screen -S rdu -X -p 0 stuff '\033\n\n'
       sleep 3
 
