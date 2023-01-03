@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # STORES CAPTURE DATETIMES AND SUCCESSFUL OR FAILED READINGS FROM QA
-logfile_path=~/corrupt_test.log
+logfile_path=~/corrupt_screen.log
 
 # QA LOG IS A TEMP WHICH HOLDS ATTEMPTED READINGS
-logfile_path_qa=~/corrupt_test_qa.log
+logfile_path_qa=~/corrupt_screen_qa.log
 
 # GET A TIMESTAMP REFERENCE, HARD SET SEC -> 00
 now_ISO8601=$(date -u +"%Y-%m-%dT%H:%M:00Z")
@@ -46,7 +46,7 @@ for a in {1..3}; do
 
    echo "[reading]" >> $logfile_path_qa
 
-   screen -S rdu -X eval "hardcopy_append on" "hardcopy corrupt_test_qa.log"
+   screen -S rdu -X eval "hardcopy_append on" "hardcopy corrupt_screen_qa.log"
 
    # SLEEP TO ENSURE [/reading] APPEND IS AFTER screen EVENT
    sleep 3
@@ -58,11 +58,11 @@ for a in {1..3}; do
 
    if [ $check1 -gt 0 ]; then
 
-      echo "[success] helium data was located" | tee -a "$logfile_path_qa"
+      echo "[success] helium data was located" | tee -a "$logfile_path"
 
    else
 
-      echo "[failure] helium data is missing" | tee -a "$logfile_path_qa"
+      echo "[failure] helium data is missing" | tee -a "$logfile_path"
 
    fi
 
@@ -70,11 +70,11 @@ for a in {1..3}; do
 
    if [ $check2 -gt 0 ]; then
 
-      echo "[success] compressor data was located" | tee -a "$logfile_path_qa"
+      echo "[success] compressor data was located" | tee -a "$logfile_path"
 
    else
 
-      echo "[failure] compressor data is missing" | tee -a "$logfile_path_qa"
+      echo "[failure] compressor data is missing" | tee -a "$logfile_path"
 
    fi
 
@@ -82,11 +82,11 @@ for a in {1..3}; do
 
    if [ $check3 -eq 1 ]; then
 
-      echo "[failure] corrupt screen detected: '3;10H'" | tee -a "$logfile_path_qa"
+      echo "[failure] corrupt screen detected: '3;10H'" | tee -a "$logfile_path"
 
    else
 
-      echo "[success] corruption not detected" | tee -a "$logfile_path_qa"
+      echo "[success] corruption not detected" | tee -a "$logfile_path"
 
    fi
 
@@ -94,7 +94,7 @@ for a in {1..3}; do
 
    if [ $check1 -gt 0 ] && [ $check2 -gt 0 ] && [ $check3 -lt 1 ]; then
 
-      echo "[success] all data is present" | tee -a "$logfile_path_qa"
+      echo "[success] all data is present" | tee -a "$logfile_path"
       break
 
       # IF NOT, WE RESET TO MAIN MENU, WAIT A BIT, AND RE-ENTER MONITORING MODE
@@ -103,18 +103,18 @@ for a in {1..3}; do
 
       # ESC TO GET INTO THE MAIN MENU
 
-      echo "[reset 1/2] now resetting the MSUP screen due to missing data (3 sec delay)" | tee -a "$logfile_path_qa"
+      echo "[reset 1/2] now resetting the MSUP screen due to missing data (3 sec delay)" | tee -a "$logfile_path"
 
       screen -S rdu -X -p 0 stuff '\033\n\n'
       sleep 3
 
       # GET US BACK INTO THE MONITOR MODE
-      echo "[reset 2/2] now attempting to re-enter monitoring mode (5 sec delay)" | tee -a "$logfile_path_qa"
+      echo "[reset 2/2] now attempting to re-enter monitoring mode (5 sec delay)" | tee -a "$logfile_path"
       screen -S rdu -X -p 0 stuff '\n\nR\n\n'
       sleep 5
 
       # NOW WE START OVER AGAIN
-      echo "[retry] now we will make another attempt to read data" | tee -a "$logfile_path_qa"
+      echo "[retry] now we will make another attempt to read data" | tee -a "$logfile_path"
 
    fi
 
@@ -124,6 +124,6 @@ done
 
 if [ $check1 -eq 0 ] || [ $check2 -eq 0 ] || [ $check3 -gt 0 ]; then
 
-   echo "[failure] could not get helium and compressor data after three tries, aborting now..." | tee -a "$logfile_path"
+   echo "[failure] could not reset data after three tries, aborting now..." | tee -a "$logfile_path"
 
 fi

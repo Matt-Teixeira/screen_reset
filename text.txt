@@ -1,1 +1,1 @@
-scp corrupt_screen_detect.sh SME10228:/home/jdis
+scp corrupt_screen_detect.sh SME01097:/home/avante
